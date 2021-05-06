@@ -20,4 +20,35 @@ namespace OOPProject
             Application.Run(new formVitaminDeposu());
         }
     }
+
+    enum Meyveler
+    {
+        Elma,
+        Armut,
+        Cilek,
+        Portakal,
+        Mandalina,
+        Greyfurt
+    };
+
+    enum Tip
+    {
+        Narenciye,
+        KatiMeyve
+    }
+
+    interface IMeyve
+    {
+        public Meyveler MeyveCesidi { get; set; }
+        public Tip MeyveTipi { get; set; }
+
+        public PictureBox PictureBox { get; set; }
+        public int Agirlik { get; set; }
+
+    }
+
+    interface ISikacak
+    { 
+        public PictureBox PictureBox { get; set; }
+    }
 }

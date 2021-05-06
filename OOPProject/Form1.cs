@@ -23,28 +23,31 @@ namespace OOPProject
         private int skor = 0;
         private int kronometre = 60;
         private BilgiKutusu bilgiKutusu;
+        private NarenciyeSikacagi narenciyeSikacagi;
+        private KatiMeyveSikacagi katiMeyveSikacagi;
 
         public formVitaminDeposu()
         {
             InitializeComponent();
 
-            bilgiKutusu = new BilgiKutusu(0, 0, Height - 200, 50);
+            bilgiKutusu = new BilgiKutusu(0, 0, Height - 200, 0);
 
             Controls.Add(bilgiKutusu._labelBaslik);
             Controls.Add(bilgiKutusu._labelVitaminA);
             Controls.Add(bilgiKutusu._labelVitaminC);
+            Controls.Add(bilgiKutusu._labelAgirlik);
 
             Random random = new Random();
 
-            NarenciyeSikacagi narenciyeSikacagi =
-                new NarenciyeSikacagi(200, 120, Width / 2 - 3 * 100, Height / 2 - 120, true);
+            narenciyeSikacagi =
+                new NarenciyeSikacagi(200, 120, Width / 2 - 3 * 100, Height / 2 - 120);
 
             narenciyeSikacagi.PictureBox.DragEnter += pictureBoxDragEnter;
             narenciyeSikacagi.PictureBox.DragDrop += pictureBoxNarenciyeDragDrop;
             Controls.Add(narenciyeSikacagi.PictureBox);
 
-            KatiMeyveSikacagi katiMeyveSikacagi =
-                new KatiMeyveSikacagi(200, 120, Width / 2 + 100, Height / 2 - 120, true);
+           katiMeyveSikacagi =
+                new KatiMeyveSikacagi(200, 120, Width / 2 + 100, Height / 2 - 120);
 
             katiMeyveSikacagi.PictureBox.DragEnter += pictureBoxDragEnter;
             katiMeyveSikacagi.PictureBox.DragDrop += pictureBoxKatiMeyveDragDrop;
@@ -99,7 +102,8 @@ namespace OOPProject
             labelKronometre.Top = Height - 100;
             Controls.Add(labelKronometre);
 
-
+            buttonBaslat.Size = new Size(120, 40);
+            buttonBaslat.TextAlign = ContentAlignment.MiddleCenter;
             buttonBaslat.Left = Width / 2 - buttonBaslat.Width / 2;
             buttonBaslat.Top = 3 * Height / 4;
             buttonBaslat.Text = "BASLAT";
@@ -111,6 +115,9 @@ namespace OOPProject
         {
             SetTimer();
             Controls.Remove(buttonBaslat);
+            katiMeyveSikacagi.PictureBox.AllowDrop = true;
+            narenciyeSikacagi.PictureBox.AllowDrop = true;
+            bilgiKutusu.Sifirla();
         }
 
         static System.Windows.Forms.Timer myTimer = new System.Windows.Forms.Timer();
@@ -134,6 +141,13 @@ namespace OOPProject
             else
             {
                 myTimer.Stop();
+                myTimer.Dispose();
+                katiMeyveSikacagi.PictureBox.AllowDrop = false;
+                narenciyeSikacagi.PictureBox.AllowDrop = false;
+                Controls.Add(buttonBaslat);
+                kronometre = 60;
+                buttonBaslat.Text = "Yeniden Başlat";
+                myTimer.Tick -= timer1_Tick;
             }
         }
 
@@ -152,14 +166,70 @@ namespace OOPProject
         private void pictureBoxNarenciyeDragDrop(object sender,
             System.Windows.Forms.DragEventArgs e)
         {
-            foreach (var _meyve in meyveler)
-            {
-                Controls.Remove(_meyve.PictureBox);
-            }
-
             if (meyveler[MEYVE_SAYİSİ - 1].MeyveTipi == Tip.Narenciye)
             {
+                int vitaminA, vitaminC;
+                Random random = new Random();
+                vitaminA = meyveler[MEYVE_SAYİSİ - 1].VitaminA() * random.Next(30, 71) / 100;
+                vitaminC = meyveler[MEYVE_SAYİSİ - 1].VitaminC() * random.Next(30, 71) / 100;
+                
+                bilgiKutusu.DegerEkle(vitaminA, vitaminC, meyveler[MEYVE_SAYİSİ - 1].Agirlik);
+
+                foreach (var _meyve in meyveler)
+                {
+                    Controls.Remove(_meyve.PictureBox);
+                }
+
                 skor++;
+
+                Portakal geciciPortakal = new Portakal(meyveler[meyveler.Count - 1]);
+
+
+                switch (meyveler[meyveler.Count - 2].MeyveCesidi)
+                {
+                    case Meyveler.Elma:
+                        meyveler[meyveler.Count - 1] = new Elma(geciciPortakal, true);
+                        break;
+                    case Meyveler.Portakal:
+                        meyveler[meyveler.Count - 1] = new Portakal(geciciPortakal, true);
+                        break;
+                }
+
+                meyveler[MEYVE_SAYİSİ - 1].PictureBox.MouseDown += pictureBoxMouseDown;
+
+                for (int i = MEYVE_SAYİSİ - 2; i > 0; i--)
+                {
+                    Elma geciciElma = new Elma(meyveler[i]);
+
+                    switch (meyveler[i - 1].MeyveCesidi)
+                    {
+                        case Meyveler.Elma:
+                            meyveler[i] = new Elma(geciciElma);
+                            break;
+                        case Meyveler.Portakal:
+                            meyveler[i] = new Portakal(geciciElma);
+                            break;
+                    }
+                }
+
+                int meyve = random.Next(2);
+
+                Elma geciciMeyve = new Elma(meyveler[0]);
+
+                switch (meyve)
+                {
+                    case 0:
+                        meyveler[0] = new Elma(geciciMeyve);
+                        break;
+                    case 1:
+                        meyveler[0] = new Portakal(geciciMeyve);
+                        break;
+                }
+
+                foreach (var _meyve in meyveler)
+                {
+                    Controls.Add(_meyve.PictureBox);
+                }
             }
             else
             {
@@ -167,72 +237,74 @@ namespace OOPProject
             }
 
             labelSkor.Text = "Skor: " + skor;
-
-
-            Portakal geciciPortakal = new Portakal(meyveler[meyveler.Count - 1]);
-
-
-            switch (meyveler[meyveler.Count - 2].MeyveCesidi)
-            {
-                case Meyveler.Elma:
-                    meyveler[meyveler.Count - 1] = new Elma(geciciPortakal, true);
-                    break;
-                case Meyveler.Portakal:
-                    meyveler[meyveler.Count - 1] = new Portakal(geciciPortakal, true);
-                    break;
-            }
-
-            meyveler[MEYVE_SAYİSİ - 1].PictureBox.MouseDown += pictureBoxMouseDown;
-
-            for (int i = MEYVE_SAYİSİ - 2; i > 0; i--)
-            {
-                Elma geciciElma = new Elma(meyveler[i]);
-
-                switch (meyveler[i - 1].MeyveCesidi)
-                {
-                    case Meyveler.Elma:
-                        meyveler[i] = new Elma(geciciElma);
-                        break;
-                    case Meyveler.Portakal:
-                        meyveler[i] = new Portakal(geciciElma);
-                        break;
-                }
-            }
-
-
-            Random random = new Random();
-
-            int meyve = random.Next(2);
-
-            Elma geciciMeyve = new Elma(meyveler[0]);
-
-            switch (meyve)
-            {
-                case 0:
-                    meyveler[0] = new Elma(geciciMeyve);
-                    break;
-                case 1:
-                    meyveler[0] = new Portakal(geciciMeyve);
-                    break;
-            }
-
-            foreach (var _meyve in meyveler)
-            {
-                Controls.Add(_meyve.PictureBox);
-            }
         }
 
         private void pictureBoxKatiMeyveDragDrop(object sender,
             System.Windows.Forms.DragEventArgs e)
         {
-            foreach (var _meyve in meyveler)
-            {
-                Controls.Remove(_meyve.PictureBox);
-            }
-
             if (meyveler[MEYVE_SAYİSİ - 1].MeyveTipi == Tip.KatiMeyve)
             {
+                int vitaminA, vitaminC;
+                Random random = new Random();
+                vitaminA = meyveler[MEYVE_SAYİSİ - 1].VitaminA() * random.Next(80, 96) / 100;
+                vitaminC = meyveler[MEYVE_SAYİSİ - 1].VitaminC() * random.Next(80, 96) / 100;
+
+                bilgiKutusu.DegerEkle(vitaminA, vitaminC,meyveler[MEYVE_SAYİSİ-1].Agirlik);
+
+                foreach (var _meyve in meyveler)
+                {
+                    Controls.Remove(_meyve.PictureBox);
+                }
+
                 skor++;
+                Portakal geciciPortakal = new Portakal(meyveler[meyveler.Count - 1]);
+
+
+                switch (meyveler[meyveler.Count - 2].MeyveCesidi)
+                {
+                    case Meyveler.Elma:
+                        meyveler[meyveler.Count - 1] = new Elma(geciciPortakal, true);
+                        break;
+                    case Meyveler.Portakal:
+                        meyveler[meyveler.Count - 1] = new Portakal(geciciPortakal, true);
+                        break;
+                }
+
+                meyveler[MEYVE_SAYİSİ - 1].PictureBox.MouseDown += pictureBoxMouseDown;
+
+                for (int i = MEYVE_SAYİSİ - 2; i > 0; i--)
+                {
+                    Elma geciciElma = new Elma(meyveler[i]);
+
+                    switch (meyveler[i - 1].MeyveCesidi)
+                    {
+                        case Meyveler.Elma:
+                            meyveler[i] = new Elma(geciciElma);
+                            break;
+                        case Meyveler.Portakal:
+                            meyveler[i] = new Portakal(geciciElma);
+                            break;
+                    }
+                }
+
+                int meyve = random.Next(2);
+
+                Elma geciciMeyve = new Elma(meyveler[0]);
+
+                switch (meyve)
+                {
+                    case 0:
+                        meyveler[0] = new Elma(geciciMeyve);
+                        break;
+                    case 1:
+                        meyveler[0] = new Portakal(geciciMeyve);
+                        break;
+                }
+
+                foreach (var _meyve in meyveler)
+                {
+                    Controls.Add(_meyve.PictureBox);
+                }
             }
             else
             {
@@ -240,74 +312,33 @@ namespace OOPProject
             }
 
             labelSkor.Text = "Skor: " + skor;
-
-
-            Portakal geciciPortakal = new Portakal(meyveler[meyveler.Count - 1]);
-
-
-            switch (meyveler[meyveler.Count - 2].MeyveCesidi)
-            {
-                case Meyveler.Elma:
-                    meyveler[meyveler.Count - 1] = new Elma(geciciPortakal, true);
-                    break;
-                case Meyveler.Portakal:
-                    meyveler[meyveler.Count - 1] = new Portakal(geciciPortakal, true);
-                    break;
-            }
-
-            meyveler[MEYVE_SAYİSİ - 1].PictureBox.MouseDown += pictureBoxMouseDown;
-
-            for (int i = MEYVE_SAYİSİ - 2; i > 0; i--)
-            {
-                Elma geciciElma = new Elma(meyveler[i]);
-
-                switch (meyveler[i - 1].MeyveCesidi)
-                {
-                    case Meyveler.Elma:
-                        meyveler[i] = new Elma(geciciElma);
-                        break;
-                    case Meyveler.Portakal:
-                        meyveler[i] = new Portakal(geciciElma);
-                        break;
-                }
-            }
-
-
-            Random random = new Random();
-
-            int meyve = random.Next(2);
-
-            Elma geciciMeyve = new Elma(meyveler[0]);
-
-            switch (meyve)
-            {
-                case 0:
-                    meyveler[0] = new Elma(geciciMeyve);
-                    break;
-                case 1:
-                    meyveler[0] = new Portakal(geciciMeyve);
-                    break;
-            }
-
-            foreach (var _meyve in meyveler)
-            {
-                Controls.Add(_meyve.PictureBox);
-            }
         }
-
     }
 
-    class Meyve : IMeyve
+    abstract class Meyve : IMeyve
     {
         public Meyveler MeyveCesidi { get; set; }
         public Tip MeyveTipi { get; set; }
 
         public PictureBox PictureBox { get; set; }
         public int Agirlik { get; set; }
+
+        public abstract int VitaminA();
+        public abstract int VitaminC();
     }
 
     class Elma : Meyve
     {
+        public override int VitaminA()
+        {
+            return (int)(Agirlik/100.0 * (int)OOPProject.VitaminA.Elma);
+        }
+
+        public override int VitaminC()
+        {
+            return (int)(Agirlik / 100.0 * (int)OOPProject.VitaminC.Elma);
+        }
+
         public Elma(int width, int height, int left, int top, bool allowDrop = false)
         {
             PictureBox = new PictureBox();
@@ -320,7 +351,7 @@ namespace OOPProject
             PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
-            Agirlik = random.Next(80, 96);
+            Agirlik = random.Next(70, 121);
         }
 
         public Elma(IMeyve meyve, bool allowDrop = false)
@@ -335,12 +366,22 @@ namespace OOPProject
             PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
-            Agirlik = random.Next(80, 96);
+            Agirlik = random.Next(70, 121);
         }
     }
 
     class Portakal : Meyve
     {
+        public override int VitaminA()
+        {
+            return (int)(Agirlik / 100.0 * (int)OOPProject.VitaminA.Portakal);
+        }
+
+        public override int VitaminC()
+        {
+            return (int)(Agirlik / 100.0 * (int)OOPProject.VitaminC.Portakal);
+        }
+
         public Portakal(int width, int height, int left, int top, bool allowDrop = false)
         {
             PictureBox = new PictureBox();
@@ -353,7 +394,7 @@ namespace OOPProject
             PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
-            Agirlik = random.Next(30, 71);
+            Agirlik = random.Next(70, 121);
         }
 
         public Portakal(IMeyve meyve, bool allowDrop = false)
@@ -368,7 +409,7 @@ namespace OOPProject
             PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
-            Agirlik = random.Next(30, 71);
+            Agirlik = random.Next(70, 121);
         }
     }
 
@@ -408,14 +449,17 @@ namespace OOPProject
 
     class BilgiKutusu : Form
     {
-        public Label _labelVitaminA, _labelVitaminC, _labelBaslik;
-        private int _vitaminA, _vitaminC;
+        public Label _labelVitaminA, _labelVitaminC, _labelBaslik, _labelAgirlik;
+        private int _vitaminA, _vitaminC, _agirlik;
 
         public BilgiKutusu(int width, int height, int top, int left)
         {
             _labelBaslik = new Label();
             _labelVitaminA = new Label();
             _labelVitaminC = new Label();
+            _labelBaslik.AutoSize = true;
+            _labelVitaminA.AutoSize = true;
+            _labelVitaminC.AutoSize = true;
             _labelBaslik.Text = "Vitamin değerleri:";
             _labelVitaminA.Text = "Vitamin A: 0";
             _labelVitaminC.Text = "Vitamin C: 0";
@@ -425,15 +469,33 @@ namespace OOPProject
             _labelVitaminC.Top = top + 50;
             _labelVitaminA.Left = left;
             _labelVitaminC.Left = left;
+
+            _labelAgirlik = new Label();
+            _labelAgirlik.Top = top + 75;
+            _labelAgirlik.Left = left;
+            _labelAgirlik.Text = "Toplam ağırlık: 0";
+            _labelAgirlik.AutoSize = true;
         }
 
-        public void VitaminEkle(int vitaminA, int vitaminC)
+        public void DegerEkle(int vitaminA, int vitaminC, int agirlik)
         {
             _vitaminA += vitaminA;
             _vitaminC += vitaminC;
+            _agirlik += agirlik;
 
             _labelVitaminA.Text = "Vitamin A: " + _vitaminA;
             _labelVitaminC.Text = "Vitamin C: " + _vitaminC;
+            _labelAgirlik.Text = "Toplam ağırlık: " + _agirlik;
+        }
+
+        public void Sifirla()
+        {
+            _vitaminC = 0;
+            _vitaminA = 0;
+            _agirlik = 0;
+            _labelVitaminA.Text = "Vitamin A: 0";
+            _labelVitaminC.Text = "Vitamin C: 0";
+            _labelAgirlik.Text = "Toplam ağırlık: 0";
         }
     }
 }

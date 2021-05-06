@@ -24,9 +24,9 @@ namespace OOPProject
     enum Meyveler
     {
         Elma,
+        Portakal,
         Armut,
         Cilek,
-        Portakal,
         Mandalina,
         Greyfurt
     };
@@ -37,6 +37,26 @@ namespace OOPProject
         KatiMeyve
     }
 
+    enum VitaminA
+    {
+        Portakal = 225,
+        Mandalina = 681,
+        Greyfurt = 3,
+        Elma = 54,
+        Armut = 25,
+        Çilek = 12,
+    }
+
+    enum VitaminC
+    {
+        Portakal = 45,
+        Mandalina = 26,
+        Greyfurt = 44,
+        Elma = 5,
+        Armut = 5,
+        Çilek = 60,
+    }
+
     interface IMeyve
     {
         public Meyveler MeyveCesidi { get; set; }
@@ -44,11 +64,13 @@ namespace OOPProject
 
         public PictureBox PictureBox { get; set; }
         public int Agirlik { get; set; }
+        public abstract int VitaminA();
+        public abstract int VitaminC();
 
     }
 
     interface ISikacak
-    { 
+    {
         public PictureBox PictureBox { get; set; }
     }
 }

@@ -44,7 +44,7 @@ namespace OOPProject
         Greyfurt = 3,
         Elma = 54,
         Armut = 25,
-        Çilek = 12,
+        Cilek = 12,
     }
 
     enum VitaminC
@@ -54,7 +54,7 @@ namespace OOPProject
         Greyfurt = 44,
         Elma = 5,
         Armut = 5,
-        Çilek = 60,
+        Cilek = 60,
     }
 
     interface IMeyve

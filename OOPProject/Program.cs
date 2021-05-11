@@ -17,11 +17,11 @@ namespace OOPProject
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new formVitaminDeposu());
+            Application.Run(new FormVitaminDeposu());
         }
     }
 
-    enum Meyveler
+    enum Cesit
     {
         Elma,
         Portakal,
@@ -57,20 +57,21 @@ namespace OOPProject
         Cilek = 60,
     }
 
-    interface IMeyve
+    interface ISuyuCikarilabilen
     {
-        public Meyveler MeyveCesidi { get; set; }
-        public Tip MeyveTipi { get; set; }
-
-        public PictureBox PictureBox { get; set; }
-        public int Agirlik { get; set; }
-        public abstract int VitaminA();
-        public abstract int VitaminC();
+        Cesit Cesit { get;}
+        Tip Tip { get;}
+        PictureBox PictureBox { get; set; }
+        int Agirlik { get;}
+        int VitaminA { get; }
+        int VitaminC { get; }
 
     }
 
     interface ISikacak
     {
-        public PictureBox PictureBox { get; set; }
+        PictureBox PictureBox { get; set; }
+
+        void SuyunuCikar(ISuyuCikarilabilen suyuCikarilabilen, BilgiKutusu bilgiKutusu);
     }
 }

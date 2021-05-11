@@ -1,7 +1,7 @@
 ﻿
 namespace OOPProject
 {
-    partial class formVitaminDeposu
+    partial class FormVitaminDeposu
     {
         /// <summary>
         ///  Required designer variable.
@@ -38,7 +38,7 @@ namespace OOPProject
             this.ClientSize = new System.Drawing.Size(978, 519);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.MaximizeBox = false;
-            this.Name = "formVitaminDeposu";
+            this.Name = "FormVitaminDeposu";
             this.Text = "Vitamin Deposu";
             this.ResumeLayout(false);
 

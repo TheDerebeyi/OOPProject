@@ -22,6 +22,15 @@ namespace OOPProject
         {
             InitializeComponent();
 
+            BackColor = Color.White;
+
+            Label labelInfo = new Label()
+            {
+                MaximumSize = new Size(250,250), Text = "Başla butonuna bastıktan sonra meyveleri uygun sıkacağın üzerine sürükleyip bırak.",Top = Height-175,Left = Width-300,AutoSize = true
+            };
+
+            Controls.Add(labelInfo);
+
             _bilgiKutusu = new BilgiKutusu(Height - 200, 50);
 
             Controls.Add(_bilgiKutusu.LabelBaslik);
@@ -329,7 +338,7 @@ namespace OOPProject
         }
     }
 
-    internal abstract class Meyve : ISuyuCikarilabilen
+    public abstract class Meyve : ISuyuCikarilabilen
     {
         protected Tip _tip;
         protected Cesit _cesit;
@@ -345,7 +354,7 @@ namespace OOPProject
         public abstract int VitaminC { get; }
     }
 
-    internal class Elma : Meyve
+    public class Elma : Meyve
     {
         public override int VitaminA => (int)(Agirlik / 100.0 * (int)OOPProject.VitaminA.Elma);
 
@@ -353,36 +362,40 @@ namespace OOPProject
 
         public Elma(int width, int height, int left, int top, bool allowDrop = false)
         {
-            PictureBox = new PictureBox();
+            PictureBox = new PictureBox
+            {
+                Size = new Size(width, height),
+                Top = top,
+                Left = left,
+                ImageLocation = "img/elma.png",
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                AllowDrop = allowDrop
+            };
             _cesit = Cesit.Elma;
             _tip = Tip.KatiMeyve;
-            PictureBox.Size = new Size(width, height);
-            PictureBox.Top = top;
-            PictureBox.Left = left;
-            PictureBox.ImageLocation = "img/elma.png";
-            PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-            PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
             _agirlik = random.Next(70, 121);
         }
 
         public Elma(ISuyuCikarilabilen suyuCikarilabilen, bool allowDrop = false)
         {
-            PictureBox = new PictureBox();
+            PictureBox = new PictureBox
+            {
+                Size = suyuCikarilabilen.PictureBox.Size,
+                Top = suyuCikarilabilen.PictureBox.Top,
+                Left = suyuCikarilabilen.PictureBox.Left,
+                ImageLocation = "img/elma.png",
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                AllowDrop = allowDrop
+            };
             _cesit = Cesit.Elma;
             _tip = Tip.KatiMeyve;
-            PictureBox.Size = suyuCikarilabilen.PictureBox.Size;
-            PictureBox.Top = suyuCikarilabilen.PictureBox.Top;
-            PictureBox.Left = suyuCikarilabilen.PictureBox.Left;
-            PictureBox.ImageLocation = "img/elma.png";
-            PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-            PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
             _agirlik = random.Next(70, 121);
         }
     }
 
-    internal class Portakal : Meyve
+    public class Portakal : Meyve
     {
         public override int VitaminA => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminA.Portakal);
 
@@ -390,36 +403,40 @@ namespace OOPProject
 
         public Portakal(int width, int height, int left, int top, bool allowDrop = false)
         {
-            PictureBox = new PictureBox();
+            PictureBox = new PictureBox
+            {
+                Size = new Size(width, height),
+                Top = top,
+                Left = left,
+                ImageLocation = "img/portakal.png",
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                AllowDrop = allowDrop
+            };
             _cesit = Cesit.Portakal;
             _tip = Tip.Narenciye;
-            PictureBox.Size = new Size(width, height);
-            PictureBox.Top = top;
-            PictureBox.Left = left;
-            PictureBox.ImageLocation = "img/portakal.png";
-            PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-            PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
             _agirlik = random.Next(70, 121);
         }
 
         public Portakal(ISuyuCikarilabilen suyuCikarilabilen, bool allowDrop = false)
         {
-            PictureBox = new PictureBox();
+            PictureBox = new PictureBox
+            {
+                Size = suyuCikarilabilen.PictureBox.Size,
+                Top = suyuCikarilabilen.PictureBox.Top,
+                Left = suyuCikarilabilen.PictureBox.Left,
+                ImageLocation = "img/portakal.png",
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                AllowDrop = allowDrop
+            };
             _cesit = Cesit.Portakal;
             _tip = Tip.Narenciye;
-            PictureBox.Size = suyuCikarilabilen.PictureBox.Size;
-            PictureBox.Top = suyuCikarilabilen.PictureBox.Top;
-            PictureBox.Left = suyuCikarilabilen.PictureBox.Left;
-            PictureBox.ImageLocation = "img/portakal.png";
-            PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-            PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
             _agirlik = random.Next(70, 121);
         }
     }
 
-    internal class Mandalina : Meyve
+    public class Mandalina : Meyve
     {
         public override int VitaminA => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminA.Mandalina);
 
@@ -427,36 +444,40 @@ namespace OOPProject
 
         public Mandalina(int width, int height, int left, int top, bool allowDrop = false)
         {
-            PictureBox = new PictureBox();
+            PictureBox = new PictureBox
+            {
+                Size = new Size(width, height),
+                Top = top,
+                Left = left,
+                ImageLocation = "img/mandalina.png",
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                AllowDrop = allowDrop
+            };
             _cesit = Cesit.Mandalina;
             _tip = Tip.Narenciye;
-            PictureBox.Size = new Size(width, height);
-            PictureBox.Top = top;
-            PictureBox.Left = left;
-            PictureBox.ImageLocation = "img/mandalina.png";
-            PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-            PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
             _agirlik = random.Next(70, 121);
         }
 
         public Mandalina(ISuyuCikarilabilen suyuCikarilabilen, bool allowDrop = false)
         {
-            PictureBox = new PictureBox();
+            PictureBox = new PictureBox
+            {
+                Size = suyuCikarilabilen.PictureBox.Size,
+                Top = suyuCikarilabilen.PictureBox.Top,
+                Left = suyuCikarilabilen.PictureBox.Left,
+                ImageLocation = "img/mandalina.png",
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                AllowDrop = allowDrop
+            };
             _cesit = Cesit.Mandalina;
             _tip = Tip.Narenciye;
-            PictureBox.Size = suyuCikarilabilen.PictureBox.Size;
-            PictureBox.Top = suyuCikarilabilen.PictureBox.Top;
-            PictureBox.Left = suyuCikarilabilen.PictureBox.Left;
-            PictureBox.ImageLocation = "img/mandalina.png";
-            PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-            PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
             _agirlik = random.Next(70, 121);
         }
     }
 
-    internal class Greyfurt : Meyve
+    public class Greyfurt : Meyve
     {
         public override int VitaminA => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminA.Greyfurt);
 
@@ -464,36 +485,40 @@ namespace OOPProject
 
         public Greyfurt(int width, int height, int left, int top, bool allowDrop = false)
         {
-            PictureBox = new PictureBox();
+            PictureBox = new PictureBox
+            {
+                Size = new Size(width, height),
+                Top = top,
+                Left = left,
+                ImageLocation = "img/greyfurt.png",
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                AllowDrop = allowDrop
+            };
             _cesit = Cesit.Greyfurt;
             _tip = Tip.Narenciye;
-            PictureBox.Size = new Size(width, height);
-            PictureBox.Top = top;
-            PictureBox.Left = left;
-            PictureBox.ImageLocation = "img/greyfurt.png";
-            PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-            PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
             _agirlik = random.Next(70, 121);
         }
 
         public Greyfurt(ISuyuCikarilabilen suyuCikarilabilen, bool allowDrop = false)
         {
-            PictureBox = new PictureBox();
+            PictureBox = new PictureBox
+            {
+                Size = suyuCikarilabilen.PictureBox.Size,
+                Top = suyuCikarilabilen.PictureBox.Top,
+                Left = suyuCikarilabilen.PictureBox.Left,
+                ImageLocation = "img/greyfurt.png",
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                AllowDrop = allowDrop
+            };
             _cesit = Cesit.Greyfurt;
             _tip = Tip.Narenciye;
-            PictureBox.Size = suyuCikarilabilen.PictureBox.Size;
-            PictureBox.Top = suyuCikarilabilen.PictureBox.Top;
-            PictureBox.Left = suyuCikarilabilen.PictureBox.Left;
-            PictureBox.ImageLocation = "img/greyfurt.png";
-            PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-            PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
             _agirlik = random.Next(70, 121);
         }
     }
 
-    internal class Armut : Meyve
+    public class Armut : Meyve
     {
         public override int VitaminA => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminA.Armut);
 
@@ -501,36 +526,40 @@ namespace OOPProject
 
         public Armut(int width, int height, int left, int top, bool allowDrop = false)
         {
-            PictureBox = new PictureBox();
+            PictureBox = new PictureBox
+            {
+                Size = new Size(width, height),
+                Top = top,
+                Left = left,
+                ImageLocation = "img/armut.png",
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                AllowDrop = allowDrop
+            };
             _cesit = Cesit.Armut;
             _tip = Tip.KatiMeyve;
-            PictureBox.Size = new Size(width, height);
-            PictureBox.Top = top;
-            PictureBox.Left = left;
-            PictureBox.ImageLocation = "img/armut.png";
-            PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-            PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
             _agirlik = random.Next(70, 121);
         }
 
         public Armut(ISuyuCikarilabilen suyuCikarilabilen, bool allowDrop = false)
         {
-            PictureBox = new PictureBox();
+            PictureBox = new PictureBox
+            {
+                Size = suyuCikarilabilen.PictureBox.Size,
+                Top = suyuCikarilabilen.PictureBox.Top,
+                Left = suyuCikarilabilen.PictureBox.Left,
+                ImageLocation = "img/armut.png",
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                AllowDrop = allowDrop
+            };
             _cesit = Cesit.Armut;
             _tip = Tip.KatiMeyve;
-            PictureBox.Size = suyuCikarilabilen.PictureBox.Size;
-            PictureBox.Top = suyuCikarilabilen.PictureBox.Top;
-            PictureBox.Left = suyuCikarilabilen.PictureBox.Left;
-            PictureBox.ImageLocation = "img/armut.png";
-            PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-            PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
             _agirlik = random.Next(70, 121);
         }
     }
 
-    internal class Cilek : Meyve
+    public class Cilek : Meyve
     {
         public override int VitaminA => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminA.Cilek);
 
@@ -538,42 +567,46 @@ namespace OOPProject
 
         public Cilek(int width, int height, int left, int top, bool allowDrop = false)
         {
-            PictureBox = new PictureBox();
+            PictureBox = new PictureBox
+            {
+                Size = new Size(width, height),
+                Top = top,
+                Left = left,
+                ImageLocation = "img/cilek.png",
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                AllowDrop = allowDrop
+            };
             _cesit = Cesit.Cilek;
             _tip = Tip.KatiMeyve;
-            PictureBox.Size = new Size(width, height);
-            PictureBox.Top = top;
-            PictureBox.Left = left;
-            PictureBox.ImageLocation = "img/cilek.png";
-            PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-            PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
             _agirlik= random.Next(70, 121);
         }
 
         public Cilek(ISuyuCikarilabilen suyuCikarilabilen, bool allowDrop = false)
         {
-            PictureBox = new PictureBox();
+            PictureBox = new PictureBox
+            {
+                Size = suyuCikarilabilen.PictureBox.Size,
+                Top = suyuCikarilabilen.PictureBox.Top,
+                Left = suyuCikarilabilen.PictureBox.Left,
+                ImageLocation = "img/cilek.png",
+                SizeMode = PictureBoxSizeMode.StretchImage,
+                AllowDrop = allowDrop
+            };
             _cesit = Cesit.Cilek;
             _tip = Tip.KatiMeyve;
-            PictureBox.Size = suyuCikarilabilen.PictureBox.Size;
-            PictureBox.Top = suyuCikarilabilen.PictureBox.Top;
-            PictureBox.Left = suyuCikarilabilen.PictureBox.Left;
-            PictureBox.ImageLocation = "img/cilek.png";
-            PictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
-            PictureBox.AllowDrop = allowDrop;
             Random random = new Random();
             _agirlik = random.Next(70, 121);
         }
     }
 
-    internal abstract class Sikacak : ISikacak
+    public abstract class Sikacak : ISikacak
     {
         public PictureBox PictureBox { get; set; }
         public abstract void SuyunuCikar(ISuyuCikarilabilen suyuCikarilabilen, BilgiKutusu bilgiKutusu);
     }
 
-    internal class KatiMeyveSikacagi : Sikacak
+    public class KatiMeyveSikacagi : Sikacak
     {
         public KatiMeyveSikacagi(int width, int height, int left, int top, bool allowDrop = false)
         {
@@ -591,14 +624,13 @@ namespace OOPProject
         public override void SuyunuCikar(ISuyuCikarilabilen suyuCikarilabilen, BilgiKutusu bilgiKutusu)
         {
             Random random = new Random();
-            var vitaminA = suyuCikarilabilen.VitaminA * random.Next(80, 96) / 100;
-            var vitaminC = suyuCikarilabilen.VitaminC * random.Next(80, 96) / 100;
+            double verim = random.Next(80, 96) / 100.0;
 
-            bilgiKutusu.DegerEkle(vitaminA, vitaminC, suyuCikarilabilen.Agirlik);
+            bilgiKutusu.DegerEkle(suyuCikarilabilen.VitaminA * verim, suyuCikarilabilen.VitaminC * verim, suyuCikarilabilen.Agirlik * verim);
         }
     }
 
-    internal class NarenciyeSikacagi : Sikacak
+    public class NarenciyeSikacagi : Sikacak
     {
         public NarenciyeSikacagi(int width, int height, int left, int top, bool allowDrop = false)
         {
@@ -616,16 +648,15 @@ namespace OOPProject
         public override void SuyunuCikar(ISuyuCikarilabilen suyuCikarilabilen, BilgiKutusu bilgiKutusu)
         {
             Random random = new Random();
-            var vitaminA = suyuCikarilabilen.VitaminA * random.Next(30, 71) / 100;
-            var vitaminC = suyuCikarilabilen.VitaminC * random.Next(30, 71) / 100;
+            double verim = random.Next(30, 71) / 100.0;
 
-            bilgiKutusu.DegerEkle(vitaminA, vitaminC, suyuCikarilabilen.Agirlik);
+            bilgiKutusu.DegerEkle(suyuCikarilabilen.VitaminA * verim, suyuCikarilabilen.VitaminC * verim, suyuCikarilabilen.Agirlik * verim);
         }
     }
 
-    internal class BilgiKutusu
+    public class BilgiKutusu
     {
-        private int _vitaminA, _vitaminC, _agirlik;
+        private double _vitaminA, _vitaminC, _agirlik;
 
         public Label LabelAgirlik { get; }
 
@@ -637,34 +668,22 @@ namespace OOPProject
 
         public BilgiKutusu(int top, int left)
         {
-            LabelBaslik = new Label();
-            LabelVitaminA = new Label();
-            LabelVitaminC = new Label();
-            LabelBaslik.AutoSize = true;
-            LabelVitaminA.AutoSize = true;
-            LabelVitaminC.AutoSize = true;
-            LabelBaslik.Text = "Vitamin değerleri:";
-            LabelVitaminA.Text = "Vitamin A: 0";
-            LabelVitaminC.Text = "Vitamin C: 0";
-            LabelBaslik.Left = left;
-            LabelBaslik.Top = top;
-            LabelVitaminA.Top = top + 25;
-            LabelVitaminC.Top = top + 50;
-            LabelVitaminA.Left = left;
-            LabelVitaminC.Left = left;
+            LabelBaslik = new Label {AutoSize = true, Text = "Vitamin değerleri:", Left = left, Top = top};
+            LabelVitaminA = new Label {AutoSize = true, Text = "Vitamin A: 0", Top = top + 25, Left = left};
+            LabelVitaminC = new Label {AutoSize = true, Text = "Vitamin C: 0", Top = top + 50, Left = left};
 
             LabelAgirlik = new Label {Top = top + 75, Left = left, Text = "Toplam ağırlık: 0", AutoSize = true};
         }
 
-        public void DegerEkle(int vitaminA, int vitaminC, int agirlik)
+        public void DegerEkle(double vitaminA, double vitaminC, double agirlik)
         {
             _vitaminA += vitaminA;
             _vitaminC += vitaminC;
             _agirlik += agirlik;
 
-            LabelVitaminA.Text = "Vitamin A: " + _vitaminA;
-            LabelVitaminC.Text = "Vitamin C: " + _vitaminC;
-            LabelAgirlik.Text = "Toplam ağırlık: " + _agirlik;
+            LabelVitaminA.Text = "Vitamin A: " + string.Format("{0:F2}",_vitaminA);
+            LabelVitaminC.Text = "Vitamin C: " + string.Format("{0:F2}", _vitaminC);
+            LabelAgirlik.Text = "Toplam ağırlık: " + string.Format("{0:F2}", _agirlik);
         }
 
         public void Sifirla()

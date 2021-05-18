@@ -21,7 +21,7 @@ namespace OOPProject
         }
     }
 
-    enum Cesit
+    public enum Cesit
     {
         Elma,
         Portakal,
@@ -31,7 +31,7 @@ namespace OOPProject
         Greyfurt
     };
 
-    enum Tip
+    public enum Tip
     {
         Narenciye,
         KatiMeyve
@@ -57,7 +57,7 @@ namespace OOPProject
         Cilek = 60,
     }
 
-    interface ISuyuCikarilabilen
+    public interface ISuyuCikarilabilen
     {
         Cesit Cesit { get;}
         Tip Tip { get;}
@@ -68,7 +68,7 @@ namespace OOPProject
 
     }
 
-    interface ISikacak
+    public interface ISikacak
     {
         PictureBox PictureBox { get; set; }
 

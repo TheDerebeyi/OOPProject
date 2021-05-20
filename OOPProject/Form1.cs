@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using OOPProject.Classlar.Enum;
+using OOPProject.Classlar.Meyve;
+using OOPProject.Classlar.Sikacak;
+using OOPProject.Interfaceler;
 
 namespace OOPProject
 {
@@ -22,8 +26,11 @@ namespace OOPProject
         {
             InitializeComponent();
 
+            //Arkaplan rengi
             BackColor = Color.White;
 
+
+            //Oyunun nasıl oynandığıyla alakalı ipucu metni
             Label labelInfo = new Label()
             {
                 MaximumSize = new Size(250,250), Text = "Başla butonuna bastıktan sonra meyveleri uygun sıkacağın üzerine sürükleyip bırak.",Top = Height-175,Left = Width-300,AutoSize = true
@@ -31,6 +38,7 @@ namespace OOPProject
 
             Controls.Add(labelInfo);
 
+            //Bilgi kutusu tüm değerleri gösterdiğimiz bir kutucuk, 
             _bilgiKutusu = new BilgiKutusu(Height - 200, 50);
 
             Controls.Add(_bilgiKutusu.LabelBaslik);
@@ -40,9 +48,12 @@ namespace OOPProject
 
             Random random = new Random();
 
+
+            //Sıkacaklar forma ekleniyor
             _narenciyeSikacagi =
                 new NarenciyeSikacagi(200, 120, Width / 2 - 3 * 100, Height / 2 - 120);
 
+            //Tasarımda meyvelerin sürüklenip sıkacakların üzerine bırakılması üzerine bir sistem kuruldu. Bunun için gerekli eventler ekleniyor.
             _narenciyeSikacagi.PictureBox.DragEnter += PictureBoxDragEnter;
             _narenciyeSikacagi.PictureBox.DragDrop += PictureBoxNarenciyeDragDrop;
             Controls.Add(_narenciyeSikacagi.PictureBox);
@@ -54,6 +65,8 @@ namespace OOPProject
             _katiMeyveSikacagi.PictureBox.DragDrop += PictureBoxKatiMeyveDragDrop;
             Controls.Add(_katiMeyveSikacagi.PictureBox);
 
+            //Tasarımda sadece şu anki değil birkaç sıra sonrasında da hangi meyvelerin geleceğini gösteren bir tasarıma gidildi. Bunun için meyveleri tuttuğumuz bir List'imiz var.
+            //_meyveler listesine random meyveler ekleniyor.
             for (int i = 0; i < SuyuCikarilabilenSayisi - 1; i++)
             {
                 int meyve = random.Next(6);
@@ -95,6 +108,7 @@ namespace OOPProject
                 Controls.Add(_meyveler[i].PictureBox);
             }
 
+            //Son meyve diğer meyvelere göre boyut olarak biraz daha büyük olduğu için ayrı bir şekilde ekleniyor.
             int meyveCesidi = random.Next(6);
             switch (meyveCesidi)
             {
@@ -130,10 +144,11 @@ namespace OOPProject
                     break;
             }
 
+            //Meyvenin sürüklenmesi gerektiğinden sürükleme işleminin başlayacağı mouse butonunun basılma durumuyla ilgili event ekleniyor. Bundan önceki meyvelerde bu yok çünkü onlar inaktif durumda.
             _meyveler[SuyuCikarilabilenSayisi - 1].PictureBox.MouseDown += PictureBoxMouseDown;
             Controls.Add(_meyveler[SuyuCikarilabilenSayisi - 1].PictureBox);
 
-
+            //Başlat butonu, skor göstergesi ve kalan süre göstergesi eklenip konum ayarlamaları yapılıyor.
             _labelSkor.Text = "Skor: " + _skor;
             _labelSkor.Left = Width / 2 - _labelSkor.Width / 2;
             Controls.Add(_labelSkor);
@@ -152,18 +167,20 @@ namespace OOPProject
             Controls.Add(_buttonBaslat);
         }
 
-        private void SirayiIlerlet()
+        private void SirayiIlerlet()                                        //Sırada birden fazla meyve olduğu için işlem sonrasında ilk başta belirlediğimiz sıradaki meyvenin başa gelmesi lazım. Ayrıca son sıraya rastgele bir meyve eklenecek.  
         {
             Random random = new Random();
 
+            //Meyvelerin PictureBox'ları formdan kaldırılıyor.
             foreach (var meyve in _meyveler)
             {
                 Controls.Remove(meyve.PictureBox);
             }
 
+            //İşlem yapılıp sırası geçmiş meyvenin özelliklerini tutacak bir geçici meyve oluşturuluyor.
             Portakal geciciPortakal = new Portakal(_meyveler[^1]);
 
-
+            //Sıranın başına gelecek yeni meyvenin çeşidine göre aynı çeşitten yeni bir meyve oluşturulacak ve bu meyveye sırası geçmiş meyvenin konum ve boyut gibi özellikleri aktarılacak.
             switch (_meyveler[^2].Cesit)
             {
                 case Cesit.Elma:
@@ -186,12 +203,16 @@ namespace OOPProject
                     break;
             }
 
+            //Sürükle bırak mekaniğinin çalışabilmesi için yeni oluşturulan meyveye gerekli event ekleniyor.
             _meyveler[SuyuCikarilabilenSayisi - 1].PictureBox.MouseDown += PictureBoxMouseDown;
 
+            //Sıranın sonundan sıranın baştan ikincisine kadar özellikler aynı olduğundan bir döngü ile bu meyvelerin sıradaki yeri bir ilerletilecek.
             for (int i = SuyuCikarilabilenSayisi - 2; i > 0; i--)
             {
+                //Meyveyi yerleştireceğimiz sıradaki elemanın konum ve boyut gibi özelliklerinin tutulacağı gecici meyve oluşturuluyor.
                 Elma geciciElma = new Elma(_meyveler[i]);
 
+                //Meyvenin çeşidine göre yeni sırada tekrar bir meyve oluşturuluyor ve gecici meyvede tuttuğumuz özellikler aktarılıyor.
                 switch (_meyveler[i - 1].Cesit)
                 {
                     case Cesit.Elma:
@@ -215,6 +236,7 @@ namespace OOPProject
                 }
             }
 
+            //Son sıra bu şartlarda boş kalıyor, buraya rastgele yeni bir meyve üretilecek.
             int gecici = random.Next(6);
 
             Elma geciciMeyve = new Elma(_meyveler[0]);
@@ -241,6 +263,7 @@ namespace OOPProject
                     break;
             }
 
+            //Tüm meyveler forma geri ekleniyor.
             foreach (var meyve in _meyveler)
             {
                 Controls.Add(meyve.PictureBox);
@@ -249,10 +272,16 @@ namespace OOPProject
 
         private void ButtonBaslatClick(object sender, EventArgs e)
         {
+            //Kronometre ayarlanıyor
             SetTimer();
+            //Başlatma butonu formdan kaldırılıyor
             Controls.Remove(_buttonBaslat);
+
+            //Sıkacaklar aktif ediliyor
             _katiMeyveSikacagi.PictureBox.AllowDrop = true;
             _narenciyeSikacagi.PictureBox.AllowDrop = true;
+
+            //Bilgi kutusunun değerleri temizleniyor
             _bilgiKutusu.Sifirla();
         }
 
@@ -260,55 +289,58 @@ namespace OOPProject
 
         private void SetTimer()
         {
+            //Her aralık sonunda gerçekleşecek event ekleniyor.
             MyTimer.Tick += timer1_Tick;
+            //Aralık bir saniye olarak belirleniyor.
             MyTimer.Interval = 1000;
+            //Kronometre başlatılıyor.
             MyTimer.Start();
-            _labelKronometre.Text = "Kalan süre: " + _kronometre;
         }
 
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            //Kronometrenin değeri kontrol ediliyor. Eğer 0'dan büyükse değeri bir azaltılıp güncellenecek.
             if (_kronometre > 0)
             {
                 _kronometre--;
                 _labelKronometre.Text = "Kalan süre: " + _kronometre;
             }
-            else
+            else        //Eğer kronometre değeri 0 ise aşağıdaki blok çalışacak.
             {
-                MyTimer.Stop();
+                MyTimer.Stop(); 
                 MyTimer.Dispose();
-                _katiMeyveSikacagi.PictureBox.AllowDrop = false;
+                _katiMeyveSikacagi.PictureBox.AllowDrop = false;            //Sıkacaklar kullanıma kapatılıyor.
                 _narenciyeSikacagi.PictureBox.AllowDrop = false;
-                Controls.Add(_buttonBaslat);
-                _kronometre = 60;
+                Controls.Add(_buttonBaslat);                                //Oyunu başlatan buton tekrardan ekleniyor.
+                _kronometre = 60;                                           //Kronometrenin sayacı tekrardan 60'a ayarlanıyor
                 _buttonBaslat.Text = "Yeniden Başlat";
-                MyTimer.Tick -= timer1_Tick;
+                MyTimer.Tick -= timer1_Tick;                                //Tekrar başlatıldığında üst üste event binmesi olmaması için event kaldırılıyor. Eğer oyun tekrar başlarsa kronometre başlatılırken bu metod geri eklenecek.
             }
         }
 
         private void PictureBoxMouseDown(object sender,
-            MouseEventArgs e)
+            MouseEventArgs e)                                           //Sürükle bırak sisteminin başladığı nokta.
         {
             _meyveler[SuyuCikarilabilenSayisi - 1].PictureBox
                 .DoDragDrop(_meyveler[SuyuCikarilabilenSayisi - 1].PictureBox, DragDropEffects.All);
         }
 
-        private void PictureBoxDragEnter(object sender, DragEventArgs e)
+        private void PictureBoxDragEnter(object sender, DragEventArgs e)   //Sürükleme sırasında sıkacakların üstüne gelindiğinde imlecin değişmesini sağlayan event.
         {
             e.Effect = e.AllowedEffect;
         }
 
         private void PictureBoxNarenciyeDragDrop(object sender,
-            DragEventArgs e)
+            DragEventArgs e)                                                //Meyve narenciye sıkacağına sürüklendiğinde çalıştırılacak event.
         {
-            if (_meyveler[SuyuCikarilabilenSayisi - 1].Tip == Tip.Narenciye)
+            if (_meyveler[SuyuCikarilabilenSayisi - 1].Tip == Tip.Narenciye)        //Sürüklenen meyvenin tipi doğru mu kontrol ediliyor. Yanlışsa skor bir düşürülüp işlem yapılmayacak.
             {
-                _narenciyeSikacagi.SuyunuCikar(_meyveler[SuyuCikarilabilenSayisi-1], _bilgiKutusu);
+                _narenciyeSikacagi.SuyunuCikar(_meyveler[SuyuCikarilabilenSayisi-1], _bilgiKutusu);     //Sıkacağın SuyunuCikar() fonksiyonu çağırılarak meyvenin değerleri hesaplanıyor. Bu değerler bilgi kutusuna gönderiliyor.
 
                 _skor++;
 
-               SirayiIlerlet();
+               SirayiIlerlet();                                         //Sıkılan meyve çıkarılarak sıradaki meyveler ilerletiyor ve sıranın sonuna bir tane rastgele meyve ekleniyor.
             }
             else
             {
@@ -319,15 +351,15 @@ namespace OOPProject
         }
 
         private void PictureBoxKatiMeyveDragDrop(object sender,
-            DragEventArgs e)
+            DragEventArgs e)                                                //Meyve katı meyve sıkacağına sürüklendiğinde çalıştırılacak event.
         {
-            if (_meyveler[SuyuCikarilabilenSayisi - 1].Tip == Tip.KatiMeyve)
+            if (_meyveler[SuyuCikarilabilenSayisi - 1].Tip == Tip.KatiMeyve)        //Sürüklenen meyvenin tipi doğru mu kontrol ediliyor. Yanlışsa skor bir düşürülüp işlem yapılmayacak.
             {
-                _katiMeyveSikacagi.SuyunuCikar(_meyveler[SuyuCikarilabilenSayisi - 1], _bilgiKutusu);
+                _katiMeyveSikacagi.SuyunuCikar(_meyveler[SuyuCikarilabilenSayisi - 1], _bilgiKutusu);     //Sıkacağın SuyunuCikar() fonksiyonu çağırılarak meyvenin değerleri hesaplanıyor. Bu değerler bilgi kutusuna gönderiliyor.
 
                 _skor++;
                 
-                SirayiIlerlet();
+                SirayiIlerlet();                                         //Sıkılan meyve çıkarılarak sıradaki meyveler ilerletiyor ve sıranın sonuna bir tane rastgele meyve ekleniyor.
             }
             else
             {
@@ -335,322 +367,6 @@ namespace OOPProject
             }
 
             _labelSkor.Text = "Skor: " + _skor;
-        }
-    }
-
-    public abstract class Meyve : ISuyuCikarilabilen
-    {
-        protected Tip _tip;
-        protected Cesit _cesit;
-        protected int _agirlik;
-
-        public Cesit Cesit => _cesit;
-
-        public Tip Tip => _tip;
-        public PictureBox PictureBox { get; set; }
-        public int Agirlik => _agirlik;
-
-        public abstract int VitaminA { get; }
-        public abstract int VitaminC { get; }
-    }
-
-    public class Elma : Meyve
-    {
-        public override int VitaminA => (int)(Agirlik / 100.0 * (int)OOPProject.VitaminA.Elma);
-
-        public override int VitaminC => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminC.Elma);
-
-        public Elma(int width, int height, int left, int top, bool allowDrop = false)
-        {
-            PictureBox = new PictureBox
-            {
-                Size = new Size(width, height),
-                Top = top,
-                Left = left,
-                ImageLocation = "img/elma.png",
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                AllowDrop = allowDrop
-            };
-            _cesit = Cesit.Elma;
-            _tip = Tip.KatiMeyve;
-            Random random = new Random();
-            _agirlik = random.Next(70, 121);
-        }
-
-        public Elma(ISuyuCikarilabilen suyuCikarilabilen, bool allowDrop = false)
-        {
-            PictureBox = new PictureBox
-            {
-                Size = suyuCikarilabilen.PictureBox.Size,
-                Top = suyuCikarilabilen.PictureBox.Top,
-                Left = suyuCikarilabilen.PictureBox.Left,
-                ImageLocation = "img/elma.png",
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                AllowDrop = allowDrop
-            };
-            _cesit = Cesit.Elma;
-            _tip = Tip.KatiMeyve;
-            Random random = new Random();
-            _agirlik = random.Next(70, 121);
-        }
-    }
-
-    public class Portakal : Meyve
-    {
-        public override int VitaminA => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminA.Portakal);
-
-        public override int VitaminC => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminC.Portakal);
-
-        public Portakal(int width, int height, int left, int top, bool allowDrop = false)
-        {
-            PictureBox = new PictureBox
-            {
-                Size = new Size(width, height),
-                Top = top,
-                Left = left,
-                ImageLocation = "img/portakal.png",
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                AllowDrop = allowDrop
-            };
-            _cesit = Cesit.Portakal;
-            _tip = Tip.Narenciye;
-            Random random = new Random();
-            _agirlik = random.Next(70, 121);
-        }
-
-        public Portakal(ISuyuCikarilabilen suyuCikarilabilen, bool allowDrop = false)
-        {
-            PictureBox = new PictureBox
-            {
-                Size = suyuCikarilabilen.PictureBox.Size,
-                Top = suyuCikarilabilen.PictureBox.Top,
-                Left = suyuCikarilabilen.PictureBox.Left,
-                ImageLocation = "img/portakal.png",
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                AllowDrop = allowDrop
-            };
-            _cesit = Cesit.Portakal;
-            _tip = Tip.Narenciye;
-            Random random = new Random();
-            _agirlik = random.Next(70, 121);
-        }
-    }
-
-    public class Mandalina : Meyve
-    {
-        public override int VitaminA => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminA.Mandalina);
-
-        public override int VitaminC => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminC.Mandalina);
-
-        public Mandalina(int width, int height, int left, int top, bool allowDrop = false)
-        {
-            PictureBox = new PictureBox
-            {
-                Size = new Size(width, height),
-                Top = top,
-                Left = left,
-                ImageLocation = "img/mandalina.png",
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                AllowDrop = allowDrop
-            };
-            _cesit = Cesit.Mandalina;
-            _tip = Tip.Narenciye;
-            Random random = new Random();
-            _agirlik = random.Next(70, 121);
-        }
-
-        public Mandalina(ISuyuCikarilabilen suyuCikarilabilen, bool allowDrop = false)
-        {
-            PictureBox = new PictureBox
-            {
-                Size = suyuCikarilabilen.PictureBox.Size,
-                Top = suyuCikarilabilen.PictureBox.Top,
-                Left = suyuCikarilabilen.PictureBox.Left,
-                ImageLocation = "img/mandalina.png",
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                AllowDrop = allowDrop
-            };
-            _cesit = Cesit.Mandalina;
-            _tip = Tip.Narenciye;
-            Random random = new Random();
-            _agirlik = random.Next(70, 121);
-        }
-    }
-
-    public class Greyfurt : Meyve
-    {
-        public override int VitaminA => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminA.Greyfurt);
-
-        public override int VitaminC => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminC.Greyfurt);
-
-        public Greyfurt(int width, int height, int left, int top, bool allowDrop = false)
-        {
-            PictureBox = new PictureBox
-            {
-                Size = new Size(width, height),
-                Top = top,
-                Left = left,
-                ImageLocation = "img/greyfurt.png",
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                AllowDrop = allowDrop
-            };
-            _cesit = Cesit.Greyfurt;
-            _tip = Tip.Narenciye;
-            Random random = new Random();
-            _agirlik = random.Next(70, 121);
-        }
-
-        public Greyfurt(ISuyuCikarilabilen suyuCikarilabilen, bool allowDrop = false)
-        {
-            PictureBox = new PictureBox
-            {
-                Size = suyuCikarilabilen.PictureBox.Size,
-                Top = suyuCikarilabilen.PictureBox.Top,
-                Left = suyuCikarilabilen.PictureBox.Left,
-                ImageLocation = "img/greyfurt.png",
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                AllowDrop = allowDrop
-            };
-            _cesit = Cesit.Greyfurt;
-            _tip = Tip.Narenciye;
-            Random random = new Random();
-            _agirlik = random.Next(70, 121);
-        }
-    }
-
-    public class Armut : Meyve
-    {
-        public override int VitaminA => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminA.Armut);
-
-        public override int VitaminC => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminC.Armut);
-
-        public Armut(int width, int height, int left, int top, bool allowDrop = false)
-        {
-            PictureBox = new PictureBox
-            {
-                Size = new Size(width, height),
-                Top = top,
-                Left = left,
-                ImageLocation = "img/armut.png",
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                AllowDrop = allowDrop
-            };
-            _cesit = Cesit.Armut;
-            _tip = Tip.KatiMeyve;
-            Random random = new Random();
-            _agirlik = random.Next(70, 121);
-        }
-
-        public Armut(ISuyuCikarilabilen suyuCikarilabilen, bool allowDrop = false)
-        {
-            PictureBox = new PictureBox
-            {
-                Size = suyuCikarilabilen.PictureBox.Size,
-                Top = suyuCikarilabilen.PictureBox.Top,
-                Left = suyuCikarilabilen.PictureBox.Left,
-                ImageLocation = "img/armut.png",
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                AllowDrop = allowDrop
-            };
-            _cesit = Cesit.Armut;
-            _tip = Tip.KatiMeyve;
-            Random random = new Random();
-            _agirlik = random.Next(70, 121);
-        }
-    }
-
-    public class Cilek : Meyve
-    {
-        public override int VitaminA => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminA.Cilek);
-
-        public override int VitaminC => (int) (Agirlik / 100.0 * (int) OOPProject.VitaminC.Cilek);
-
-        public Cilek(int width, int height, int left, int top, bool allowDrop = false)
-        {
-            PictureBox = new PictureBox
-            {
-                Size = new Size(width, height),
-                Top = top,
-                Left = left,
-                ImageLocation = "img/cilek.png",
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                AllowDrop = allowDrop
-            };
-            _cesit = Cesit.Cilek;
-            _tip = Tip.KatiMeyve;
-            Random random = new Random();
-            _agirlik= random.Next(70, 121);
-        }
-
-        public Cilek(ISuyuCikarilabilen suyuCikarilabilen, bool allowDrop = false)
-        {
-            PictureBox = new PictureBox
-            {
-                Size = suyuCikarilabilen.PictureBox.Size,
-                Top = suyuCikarilabilen.PictureBox.Top,
-                Left = suyuCikarilabilen.PictureBox.Left,
-                ImageLocation = "img/cilek.png",
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                AllowDrop = allowDrop
-            };
-            _cesit = Cesit.Cilek;
-            _tip = Tip.KatiMeyve;
-            Random random = new Random();
-            _agirlik = random.Next(70, 121);
-        }
-    }
-
-    public abstract class Sikacak : ISikacak
-    {
-        public PictureBox PictureBox { get; set; }
-        public abstract void SuyunuCikar(ISuyuCikarilabilen suyuCikarilabilen, BilgiKutusu bilgiKutusu);
-    }
-
-    public class KatiMeyveSikacagi : Sikacak
-    {
-        public KatiMeyveSikacagi(int width, int height, int left, int top, bool allowDrop = false)
-        {
-            PictureBox = new PictureBox
-            {
-                Size = new Size(width, height),
-                Top = top,
-                Left = left,
-                ImageLocation = "img/katimeyve.png",
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                AllowDrop = allowDrop
-            };
-        }
-
-        public override void SuyunuCikar(ISuyuCikarilabilen suyuCikarilabilen, BilgiKutusu bilgiKutusu)
-        {
-            Random random = new Random();
-            double verim = random.Next(80, 96) / 100.0;
-
-            bilgiKutusu.DegerEkle(suyuCikarilabilen.VitaminA * verim, suyuCikarilabilen.VitaminC * verim, suyuCikarilabilen.Agirlik * verim);
-        }
-    }
-
-    public class NarenciyeSikacagi : Sikacak
-    {
-        public NarenciyeSikacagi(int width, int height, int left, int top, bool allowDrop = false)
-        {
-            PictureBox = new PictureBox
-            {
-                Size = new Size(width, height),
-                Top = top,
-                Left = left,
-                ImageLocation = "img/narenciye.png",
-                SizeMode = PictureBoxSizeMode.StretchImage,
-                AllowDrop = allowDrop
-            };
-        }
-
-        public override void SuyunuCikar(ISuyuCikarilabilen suyuCikarilabilen, BilgiKutusu bilgiKutusu)
-        {
-            Random random = new Random();
-            double verim = random.Next(30, 71) / 100.0;
-
-            bilgiKutusu.DegerEkle(suyuCikarilabilen.VitaminA * verim, suyuCikarilabilen.VitaminC * verim, suyuCikarilabilen.Agirlik * verim);
         }
     }
 
@@ -666,7 +382,7 @@ namespace OOPProject
 
         public Label LabelBaslik { get; }
 
-        public BilgiKutusu(int top, int left)
+        public BilgiKutusu(int top, int left)               //Bilgi kutusunun forma ekleneceği koordinatların girildiği kurucu metod
         {
             LabelBaslik = new Label {AutoSize = true, Text = "Vitamin değerleri:", Left = left, Top = top};
             LabelVitaminA = new Label {AutoSize = true, Text = "Vitamin A: 0", Top = top + 25, Left = left};
@@ -675,7 +391,7 @@ namespace OOPProject
             LabelAgirlik = new Label {Top = top + 75, Left = left, Text = "Toplam ağırlık: 0", AutoSize = true};
         }
 
-        public void DegerEkle(double vitaminA, double vitaminC, double agirlik)
+        public void DegerEkle(double vitaminA, double vitaminC, int agirlik)             //Bilgi kutusuna sıkılan meyvenin değerlerini ekler.
         {
             _vitaminA += vitaminA;
             _vitaminC += vitaminC;
@@ -683,10 +399,10 @@ namespace OOPProject
 
             LabelVitaminA.Text = "Vitamin A: " + string.Format("{0:F2}",_vitaminA);
             LabelVitaminC.Text = "Vitamin C: " + string.Format("{0:F2}", _vitaminC);
-            LabelAgirlik.Text = "Toplam ağırlık: " + string.Format("{0:F2}", _agirlik);
+            LabelAgirlik.Text = "Toplam ağırlık: " + string.Format("{0}", _agirlik);
         }
 
-        public void Sifirla()
+        public void Sifirla()                                                           //Bilgi kutusunun tüm değerlerini sıfırlar.
         {
             _vitaminC = 0;
             _vitaminA = 0;
